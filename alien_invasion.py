@@ -14,6 +14,9 @@ class AlienInvasion:
         self.settings = Settings()
         #创建一个长1200，宽800的窗口
         self.screen = pg.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        #self.settings.screen_width = self.screen.get_rect().width
+        #self.settings.screen_height = self.screen.get_rect().height
         #初始化时钟属性
         # 实例化Ship类
         self.ship = Ship(self)
@@ -42,22 +45,33 @@ class AlienInvasion:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                  sys.exit()
-
             #记录键盘按下实现左右移动
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_RIGHT:
-                    self.ship.moving_right = True
-                elif event.key == pg.K_LEFT:
-                    self.ship.moving_left = True
-
-            #记录键盘谈起实现停止移动
+                self._check_keydown_events(event)
             elif event.type == pg.KEYUP:
-                if event.key == pg.K_RIGHT:
-                    self.ship.moving_right = False
-                elif event.key == pg.K_LEFT:
-                    self.ship.moving_left = False
+                self._check_keyup_events(event)
+    #记录按下键盘
+    def _check_keydown_events(self, event):
+        if event.key == pg.K_RIGHT:
+            self.ship.moving_right = True
+        elif event.key == pg.K_LEFT:
+            self.ship.moving_left = True
+        elif event.key == pg.K_UP:
+            self.ship.moving_up = True
+        elif event.key == pg.K_DOWN:
+            self.ship.moving_down = True
+        elif event.key == pg.K_q:
+            sys.exit()
 
-
+    def _check_keyup_events(self, event):
+        if event.key == pg.K_RIGHT:
+            self.ship.moving_right = False
+        elif event.key == pg.K_LEFT:
+            self.ship.moving_left = False
+        elif event.key == pg.K_UP:
+            self.ship.moving_up = False
+        elif event.key == pg.K_DOWN:
+            self.ship.moving_down = False
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
