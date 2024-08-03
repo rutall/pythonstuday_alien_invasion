@@ -5,6 +5,7 @@ import pygame as pg
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 #定义一个类，用于初始化游戏窗口和监听键盘鼠标的事件
 class AlienInvasion:
@@ -22,6 +23,10 @@ class AlienInvasion:
         # 实例化Ship类
         self.ship = Ship(self)
         self.bullets = pg.sprite.Group()
+        self.aliens = pg.sprite.Group()
+
+        self._create_fleet()
+
         self.clock = pg.time.Clock()
         #设置背景颜色
         self.bg_color = self.settings.bg_color
@@ -91,6 +96,7 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.ship.blitme()
+        self.aliens.draw(self.screen)
 
         pg.display.flip()
 
@@ -103,6 +109,29 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+
+    def _create_fleet(self):
+        #创建一个外星舰队
+        #创建一个外星人,再不断添加，知道没有空间再添加外星人位置
+        #外新人的间距为外星人的宽度和外星人的高度
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+
+        current_x, current_y = alien_width, alien_height
+        while current_y <(self.settings.screen_height - 3 * alien_height):
+            while current_x < (self.settings.screen_width - 2 * alien_width):
+                self._create_alien(current_x, current_y)
+                current_x += 2 * alien_width
+
+            current_x = alien_width
+            current_y += 2 * alien_height
+    def _create_alien(self, x_position, y_position):
+        #创建一个外星人并将其放在当前行中
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_positionK
+        self.aliens.add(new_alien)
 
 
 
