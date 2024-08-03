@@ -4,6 +4,7 @@ import pygame
 import pygame as pg
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 #定义一个类，用于初始化游戏窗口和监听键盘鼠标的事件
 class AlienInvasion:
@@ -20,6 +21,7 @@ class AlienInvasion:
         #初始化时钟属性
         # 实例化Ship类
         self.ship = Ship(self)
+        self.bullets = pg.sprite.Group()
         self.clock = pg.time.Clock()
         #设置背景颜色
         self.bg_color = self.settings.bg_color
@@ -29,6 +31,7 @@ class AlienInvasion:
             #调用辅助方法，侦听键盘和鼠标事件
             self._check_events()
             self.ship.update()
+            self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
 
@@ -50,6 +53,7 @@ class AlienInvasion:
                 self._check_keydown_events(event)
             elif event.type == pg.KEYUP:
                 self._check_keyup_events(event)
+
     #记录按下键盘
     def _check_keydown_events(self, event):
         if event.key == pg.K_RIGHT:
@@ -62,6 +66,8 @@ class AlienInvasion:
             self.ship.moving_down = True
         elif event.key == pg.K_q:
             sys.exit()
+        elif event.key == pg.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         if event.key == pg.K_RIGHT:
@@ -72,6 +78,34 @@ class AlienInvasion:
             self.ship.moving_up = False
         elif event.key == pg.K_DOWN:
             self.ship.moving_down = False
+
+    def _fire_bullet(self):
+        #创建一颗子弹，并将其加入编组bullets
+        if len(self.bullets) < self.settings.bullet_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_screen(self):
+        #更新屏幕上的图像并切换到新屏幕
+        self.screen.fill(self.settings.bg_color)
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+        self.ship.blitme()
+
+        pg.display.flip()
+
+    def _update_bullets(self):
+        #更新子弹位置并删除已消失的子弹
+        # 更新子弹的位置
+        self.bullets.update()
+
+        #删除已消失的子弹
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
+
+
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
