@@ -72,6 +72,7 @@ class AlienInvasion:
             self.ship.moving_up = False
         elif event.key == pg.K_DOWN:
             self.ship.moving_down = False
+
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
