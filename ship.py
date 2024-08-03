@@ -6,9 +6,6 @@ class Ship:
         self.screen = ai_game.screen
         self.screen_rect = ai_game.screen.get_rect()
         self.settings = ai_game.settings
-        self.moving_right = False
-        self.moving_left = False
-
 
         #加载飞船图像并获取其外接矩形
         self.image = pygame.image.load('images/spider.bmp')
@@ -18,13 +15,16 @@ class Ship:
 
         self.x = float(self.rect.x)
 
+        self.moving_right = False
+        self.moving_left = False
+
     #定义飞船左右移动距离
     def update(self):
-        if self.moving_right:
-            self.rect.x += self.settings.ship_speed
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.settings.ship_speed
 
-        if self.moving_left:
-            self.rect.x -= self.settings.ship_speed
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.settings.ship_speed
 
         self.rect.x = self.x
 
